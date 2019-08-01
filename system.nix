@@ -1,6 +1,8 @@
 { pkgs, ... }:
 
-let user = import ./user.nix;
+let
+user = import ./user.nix;
+sources = import ./nix/sources.nix;
 in 
 {
   networking.hostName = user.hostname;
@@ -16,6 +18,9 @@ in
         "zoom-us"
         "intel-ocl"
       ];
+    packageOverrides = pkgs: {
+      nur = import sources.NUR { inherit pkgs; };
+    };  
   };
   
   nix = {

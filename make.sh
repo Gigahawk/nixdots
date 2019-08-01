@@ -53,6 +53,7 @@ case "$mode" in
         trace ssh "root@$ip" -c "NIXOS_INSTALL_BOOTLOADER=1 sudo --preserve-env=NIXOS_INSTALL_BOOTLOADER $drv/bin/switch-to-configuration switch"
         ;;
     "update")
+        trace nixpkgs-firefox-addons firefox-addons.json nix/firefox-addons.nix   
         trace niv update
         trace ./make.sh build
         ;;

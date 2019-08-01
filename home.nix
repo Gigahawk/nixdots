@@ -12,10 +12,10 @@ in
     libnotify xorg.xkill xorg.xev redshift srandrd xnee
 
     # Apps
-    firefox-bin qutebrowser chromium google-chrome libreoffice gimp
-    spotify smplayer mplayer zathura sxiv sweethome3d.application scrot
-    xsel xclip deluge pcmanfm tmate qemu qemu_kvm pdfpc asciiquarium
-    zoom-us slack meld
+    qutebrowser chromium google-chrome libreoffice gimp spotify smplayer
+    mplayer zathura sxiv sweethome3d.application scrot xsel xclip deluge
+    pcmanfm tmate qemu qemu_kvm pdfpc asciiquarium zoom-us slack meld
+    pkgs.nur.repos.rycee.firefox-addons-generator
     (hunspellWithDicts [ hunspellDicts.en-gb-ise ])
 
     # Fonts
@@ -84,6 +84,27 @@ in
   xsession = {
     enable = true;
     windowManager.command = "${pkgs.i3}/bin/i3";
+  };
+
+  programs.firefox = {
+    enable = true;
+    
+    extensions = builtins.attrValues (import ./nix/firefox-addons.nix {
+      buildFirefoxXpiAddon = pkgs.nur.repos.rycee.firefox-addons.buildFirefoxXpiAddon;
+      fetchurl = pkgs.fetchurl; stdenv = pkgs.stdenv;
+    });
+    
+    profiles = {
+      default = {
+        id = 0;
+        isDefault = true;
+        settings = {
+          "browser.startup.homepage" = "about:blank";
+          "browser.link.open_newwindow" = 2;
+          "browser.shell.checkDefaultBrowser" = false;
+        };
+      };
+    };
   };
 
   manual.manpages.enable = false;
