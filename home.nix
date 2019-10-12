@@ -1,64 +1,72 @@
 { user, pkgs, ...}:
 let
 sources = import ./nix/sources.nix;
-lorri = (import sources.lorri { inherit pkgs; });
 in
 {
+  imports =
+    builtins.filter builtins.pathExists [ ./home-private.nix ];
+
   home.packages = with pkgs; [
     # WM
-    i3 i3status i3lock rofi unclutter autorandr arandr maim
-    networkmanagerapplet parcellite lxappearance xfontsel feh pasystray
-    pavucontrol xdotool kitty xautolock xorg.xbacklight dunst acpi
-    libnotify xorg.xkill xorg.xev redshift srandrd xnee
+    acpi arandr autorandr dunst feh i3 i3lock i3status kitty libnotify
+    lxappearance maim networkmanagerapplet parcellite pasystray
+    pavucontrol redshift rofi srandrd unclutter xautolock xdotool xfontsel
+    xnee xorg.xbacklight xorg.xev xorg.xkill
 
     # Apps
-    qutebrowser chromium google-chrome libreoffice gimp spotify smplayer
-    mplayer zathura sxiv sweethome3d.application scrot xsel xclip deluge
-    pcmanfm tmate qemu qemu_kvm pdfpc asciiquarium zoom-us slack meld
+    asciiquarium bazel chromium deluge gimp google-chrome
+    libreoffice meld mplayer pcmanfm qemu qemu_kvm qutebrowser scrot
+    slack smplayer sweethome3d.application sxiv tmate xclip xsel zathura
+    claws-mail inkscape
     pkgs.nur.repos.rycee.firefox-addons-generator
-    (hunspellWithDicts [ hunspellDicts.en-gb-ise ])
+
+    # services
+    awscli circleci-cli google-cloud-sdk gist gitAndTools.hub slack spotify
+    whois zoom-us
 
     # Fonts
     ubuntu_font_family source-code-pro
 
     # CLI
-    zsh zsh-syntax-highlighting nix-zsh-completions ranger bashmount
-    imagemagick pdftk ncdu htop tree ascii powertop ghostscript nload
-    asciinema zip unzip file dos2unix findutils direnv watch graphviz
-    rsync openssl entr gnupg gitAndTools.hub gist pv jq yq ripgrep
-    tree autojump ncdu htop tokei units pandoc curl wget hexedit
-    docker_compose mtr nmap cmatrix awscli pass-otp zbar tig sqlite fd
-    dnsutils pwgen ltrace strace fzf termdown s3fs multitail gettext
-    cpulimit paperkey moreutils fpp exa ffmpeg tcpdump iw weechat tmux
-    up pythonPackages.subliminal pythonPackages.glances
+    ascii asciinema bashmount cmatrix cpufrequtils cpulimit
+    curl direnv dnsutils docker_compose dos2unix entr exa fd ffmpeg file
+    findutils fpp fzf gettext ghostscript gnupg graphviz hexedit htop
+    htop imagemagick iw jq ltrace lynx moreutils mpv mtr multitail
+    ncdu nix-zsh-completions nload nmap openssl pandoc paperkey
+    pass-otp pdftk powerstat powertop pv pwgen pythonPackages.glances
+    pythonPackages.subliminal ranger ripgrep rsync s3fs sqlite strace
+    tcpdump termdown tig tmux tokei tree tree units unzip up watch
+    weechat wget yq zbar zip zsh zsh-syntax-highlighting rclone
+    starship cookiecutter
+    (hunspellWithDicts [ hunspellDicts.en-gb-ise ])
     (texlive.combine {
       inherit (texlive) scheme-small;
     })
 
     (import ./nix/mk-scripts.nix { inherit pkgs; } ./scripts)
-    
+
     # editors
-    kakoune emacs neovim
+    neovim
+    (kakoune.override {
+      configure = {
+        plugins = [ (callPackage ./packages/kakoune-surround.nix {}) ];
+      };
+    })
+    (import ./nix/mk-emacs.nix { inherit pkgs; } ./dotfiles/emacs.el)
 
     # haskell
-    stack cabal2nix ghc 
+    stack cabal2nix ghc
     (haskell.lib.justStaticExecutables haskellPackages.ghcid)
-   
+
     # java/scala
-    openjdk8 scala hadoop
-    (spark.override { 
-      mesosSupport = false; 
-      RSupport = false; 
-      pythonPackages = python3Packages;
-    })
-    
+    openjdk8 scala
+
     # python
-    python37
+    python37 python37Packages.virtualenv
 
     # nix
-    nix-prefetch-scripts patchelf nixops nix-top lorri
-    (haskell.lib.justStaticExecutables (import sources.niv {}).niv)
-    (haskell.lib.justStaticExecutables haskellPackages.cachix)
+    nix-prefetch-scripts patchelf nixops nix-top
+    niv cachix
   ];
 
   programs.git = {
@@ -69,31 +77,42 @@ in
       co = "checkout";
       st = "status -sb";
     };
-    extraConfig = ''
-        [url "git@github.com:"]
-        insteadOf = https://github.com/  
-    '';
+    extraConfig = {
+        url = {
+          "ssh://git@github.com/" = { insteadOf = https://github.com/; };
+        };
+        hub = {
+          protocol = "git";
+        };
+    };
   } // (if user.gpgKey != ""
         then { signing = { signByDefault = true;
                            key = user.gpgKey;
                            gpgPath = "gpg"; }; }
         else {});
 
-  services.gpg-agent.enable = true;
+  services.gpg-agent = {
+    enable = true;
+    enableSshSupport = true;
+    sshKeys =
+      if user.gpgSshKeygrip != ""
+      then [ user.gpgSshKeygrip ]
+      else [];
+  };
 
   xsession = {
     enable = true;
-    windowManager.command = "${pkgs.i3}/bin/i3";
+    windowManager.command = "i3";
   };
 
   programs.firefox = {
     enable = true;
-    
+
     extensions = builtins.attrValues (import ./nix/firefox-addons.nix {
       buildFirefoxXpiAddon = pkgs.nur.repos.rycee.firefox-addons.buildFirefoxXpiAddon;
       fetchurl = pkgs.fetchurl; stdenv = pkgs.stdenv;
     });
-    
+
     profiles = {
       default = {
         id = 0;
@@ -110,7 +129,7 @@ in
   manual.manpages.enable = false;
 
   home.file.".config/kak/kakrc".source = ./dotfiles/kakrc;
-  
+
   home.file.".config/i3/config".source = ./dotfiles/i3/config;
   home.file.".config/i3/autostart.sh".source = ./dotfiles/i3/autostart.sh;
   home.file.".config/i3/wallpaper.png".source = ./dotfiles/i3/wallpaper.png;
@@ -123,18 +142,23 @@ in
     ./dotfiles/qutebrowser/bookmarks;
 
   home.file.".config/mimeapps.list".source = ./dotfiles/mimeapps.list;
-  
+
+  home.file.".config/starship.toml".source = ./dotfiles/starship.toml;
+
   home.file.".zshrc".text = ''
     ${pkgs.any-nix-shell}/bin/any-nix-shell zsh | source /dev/stdin
-    source ${pkgs.autojump}/etc/profile.d/autojump.sh
     source ${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
     source ${./dotfiles/zshrc}
+
+    source ${sources.h}/h.sh
+    h_init_zsh
   '';
-  
+
   home.file.".profile" = {
     text = ''
       export NIX_PATH=nixpkgs=${pkgs.path}
+      source "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
       source ${./dotfiles/profile}
     '';
     executable = true;
@@ -147,47 +171,14 @@ in
     source = ./dotfiles/autorandr-postswitch;
     executable = true;
   };
-  
-  systemd.user.sockets.lorri = {
-    Unit = {
-      Description = "lorri build daemon";
-    };
 
-    Socket = {
-      ListenStream = "%t/lorri/daemon.socket";
-    };
-
-    Install = {
-      WantedBy = [ "sockets.target" ];
-    };
-  };
-  systemd.user.services.lorri = {
-    Unit = {
-      Description = "lorri build daemon";
-      Documentation = "https://github.com/target/lorri";
-      ConditionUser = "!@system";
-      Requires = "lorri.socket";
-      After = "lorri.socket";
-      RefuseManualStart = true;
-    };
-
-    Service = {
-      ExecStart = "${lorri}/bin/lorri daemon";
-      PrivateTmp = true;
-      ProtectSystem = "strict";
-      WorkingDirectory = "%h";
-      Restart = "on-failure";
-      Environment = "PATH=${pkgs.nix}/bin:${pkgs.git}/bin RUST_BACKTRACE=1";
-    };
-  };
-  
-  systemd.user.services.battery-notification = 
+  systemd.user.services.battery-notification =
     let p = pkgs.runCommand "battery-notification" {
       buildInputs = [ pkgs.makeWrapper ];
     } ''
       mkdir -p $out/bin
       makeWrapper ${./scripts/battery-notification.sh} $out/bin/battery-notification.sh \
-        --prefix PATH : "${pkgs.acpi}/bin:${pkgs.libnotify}/bin:${pkgs.bash}/bin"
+        --prefix PATH : "${pkgs.acpi}/bin:${pkgs.libnotify}/bin:${pkgs.bash}/bin:${pkgs.gnugrep}/bin"
     '';
     in {
       Unit = {
@@ -206,9 +197,12 @@ in
       Persistent = true;
     };
     Install = {
-      WantedBy = [ "timers.target" ]; 
+      WantedBy = [ "timers.target" ];
     };
   };
 
   news.notify = "silent";
+
+  # Force home-manager to use pinned nixpkgs
+  _module.args.pkgs = pkgs.lib.mkForce pkgs;
 }
