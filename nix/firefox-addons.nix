@@ -2,10 +2,10 @@
   {
     "https-everywhere" = buildFirefoxXpiAddon {
       pname = "https-everywhere";
-      version = "2019.6.27";
+      version = "2019.11.7";
       addonId = "https-everywhere@eff.org";
-      url = "https://addons.mozilla.org/firefox/downloads/file/3060290/https_everywhere-2019.6.27-an+fx.xpi?src=";
-      sha256 = "37bb2155496910fdcf093c6f40d7871bd9605b4bd0200498b1c7c29b2ca4831c";
+      url = "https://addons.mozilla.org/firefox/downloads/file/3442258/https_everywhere-2019.11.7-an+fx.xpi?src=";
+      sha256 = "b4c33fcc43f9da395ff0b139cec005afa43f007c45a991d6089402c0b78288e6";
       meta = with stdenv.lib;
       {
         homepage = "https://www.eff.org/https-everywhere";
@@ -13,12 +13,25 @@
         platforms = platforms.all;
         };
       };
+    "i-hate-tabs-sdi-for-firefox" = buildFirefoxXpiAddon {
+      pname = "i-hate-tabs-sdi-for-firefox";
+      version = "0.1";
+      addonId = "{1b7bafcd-5f58-4274-aedf-d77a26196bb9}";
+      url = "https://addons.mozilla.org/firefox/downloads/file/894461/i_hate_tabs_sdi_for_firefox-0.1-an+fx-linux.xpi?src=";
+      sha256 = "fb620ef9490047fbfdd172d205e59c140aa21c67a027723cf37800b1bb076a6f";
+      meta = with stdenv.lib;
+      {
+        description = "Automatically converts new tabs to new windows instead.";
+        license = licenses.mpl20;
+        platforms = platforms.all;
+        };
+      };
     "privacy-badger17" = buildFirefoxXpiAddon {
       pname = "privacy-badger17";
-      version = "2019.10.8";
+      version = "2019.11.18";
       addonId = "jid1-MnnxcxisBPnSXQ@jetpack";
-      url = "https://addons.mozilla.org/firefox/downloads/file/3420722/privacy_badger-2019.10.8-an+fx.xpi?src=";
-      sha256 = "14bb91f75b9886d7269e89fa5bfbe1032eb4f42c466ce80fbc61be8fd80bf4df";
+      url = "https://addons.mozilla.org/firefox/downloads/file/3448925/privacy_badger-2019.11.18-an+fx.xpi?src=";
+      sha256 = "1ffa75044528f312b282f61cfab7520c006416771e85a63644a1bf528591129d";
       meta = with stdenv.lib;
       {
         homepage = "https://www.eff.org/privacybadger";

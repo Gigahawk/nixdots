@@ -128,10 +128,20 @@ in
           "browser.startup.homepage" = "about:blank";
           "browser.link.open_newwindow" = 2;
           "browser.shell.checkDefaultBrowser" = false;
+          "signon.rememberSignons" = false;
+          "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
         };
+        userChrome = ''
+          #TabsToolbar {
+            visibility: collapse !important;
+            margin-bottom: 21px !important;
+          }
+        '';
       };
     };
-  };
+
+
+};
 
   manual.manpages.enable = false;
 
