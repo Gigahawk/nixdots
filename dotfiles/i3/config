@@ -6,6 +6,8 @@ floating_modifier $mod
 
 bindsym $mod+backslash exec kitty --title floating sc
 for_window [class="kitty" title="floating"] floating enable
+for_window [class="pinentry"] sticky enable
+
 floating_maximum_size 800 x 400
 
 bindsym $mod+Return exec kitty
@@ -13,9 +15,9 @@ bindsym $mod+BackSpace exec xautolock -locknow
 
 bindsym $mod+Shift+q kill
 
-bindsym $mod+d exec rofi -show run -theme DarkBlue
-bindsym $mod+p exec rofi-pass -theme DarkBlue
-bindsym $mod+s exec sh -c 'q=$(rofi -theme DarkBlue -dmenu -p "ddg" -l 0) && qutebrowser "https://duckduckgo.com/?q=$q"'
+bindsym $mod+d exec rofi -show run
+bindsym $mod+p exec rofi-pass
+bindsym $mod+s exec rofi -show window
 
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl -- set-sink-volume @DEFAULT_SINK@ +5% #increase sound volume
 bindsym XF86AudioLowerVolume exec --no-startup-id pactl -- set-sink-volume @DEFAULT_SINK@ -5% #decrease sound volume
@@ -117,7 +119,7 @@ bindsym $mod+r mode "resize"
 focus_follows_mouse no
 
 bar {
-        status_command i3status
+        status_command i3blocks
         mode hide
         hidden_state hide
         modifier $mod

@@ -47,8 +47,10 @@ in
     nixPath = [
       "nixpkgs=${pkgs.path}"
     ];
+    daemonNiceLevel = 19;
   };
 
+  networking.dhcpcd.enable = false;
   networking.networkmanager.enable = true;
 
   time.timeZone = "Pacific/Auckland";
@@ -61,11 +63,24 @@ in
   };
 
   boot.cleanTmpDir = true;
+  services.fwupd.enable = true;
 
   services.openssh.enable = true;
   networking.firewall = {
     enable = true;
     allowedTCPPorts = [ 22 ];
+  };
+
+  services.tor = {
+    enable = true;
+    client.enable = true;
+  };
+
+  services.ipfs = {
+    enable = true;
+    autoMount = true;
+    localDiscovery = false;
+    gatewayAddress = "/ip4/127.0.0.1/tcp/8090";
   };
 
   virtualisation.docker = {
@@ -79,23 +94,23 @@ in
   services.xserver = {
     enable = true;
     autorun = true;
-    displayManager.slim = {
+    desktopManager.xterm.enable = true;
+    displayManager.lightdm = {
       enable = true;
-      defaultUser = user.username;
-      autoLogin = true;
+      greeter.enable = false;
+      autoLogin = {
+        enable = true;
+        user = "utdemir";
+      };
     };
     xkbOptions = "caps:escape";
   };
 
-  # FIXME: https://github.com/NixOS/nixpkgs/issues/63533
-  # services.earlyoom = {
-  #   enable = true;
-  #   freeMemThreshold = 5;
-  # };
+  services.lorri.enable = true;
 
-  services.clamav = {
-    daemon.enable = true;
-    updater.enable = true;
+  services.earlyoom = {
+    enable = true;
+    freeMemThreshold = 5;
   };
 
   hardware.pulseaudio.enable = true;

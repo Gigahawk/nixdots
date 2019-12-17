@@ -8,7 +8,7 @@ in
 
   home.packages = with pkgs; [
     # WM
-    acpi arandr autorandr dunst feh i3 i3lock i3status kitty libnotify
+    acpi arandr autorandr dunst feh i3 i3lock i3blocks kitty libnotify
     lxappearance maim networkmanagerapplet parcellite pasystray
     pavucontrol redshift rofi srandrd unclutter xautolock xdotool xfontsel
     xnee xorg.xbacklight xorg.xev xorg.xkill
@@ -18,26 +18,26 @@ in
     libreoffice meld mplayer pcmanfm qemu qemu_kvm qutebrowser scrot
     slack smplayer sweethome3d.application sxiv tmate xclip xsel zathura
     claws-mail inkscape
+    sxiv tmate xclip xsel zathura claws-mail inkscape macchanger gthumb
     pkgs.nur.repos.rycee.firefox-addons-generator
 
     # services
     awscli circleci-cli google-cloud-sdk gist gitAndTools.hub slack spotify
-    whois zoom-us
+    whois zoom-us zulip kubectl
 
     # Fonts
     ubuntu_font_family source-code-pro
 
     # CLI
-    ascii asciinema bashmount cmatrix cpufrequtils cpulimit
-    curl direnv dnsutils docker_compose dos2unix entr exa fd ffmpeg file
+    ascii asciinema bashmount cmatrix cpufrequtils cpulimit curl
+    direnv dnsutils docker_compose dos2unix entr exa fd ffmpeg file
     findutils fpp fzf gettext ghostscript gnupg graphviz hexedit htop
-    htop imagemagick iw jq ltrace lynx moreutils mpv mtr multitail
-    ncdu nix-zsh-completions nload nmap openssl pandoc paperkey
-    pass-otp pdftk powerstat powertop pv pwgen pythonPackages.glances
-    pythonPackages.subliminal ranger ripgrep rsync s3fs sqlite strace
-    tcpdump termdown tig tmux tokei tree tree units unzip up watch
-    weechat wget yq zbar zip zsh zsh-syntax-highlighting rclone
-    starship cookiecutter
+    htop imagemagick iw jq ltrace lynx moreutils mpv mtr multitail ncdu
+    nix-zsh-completions nload nmap openssl pandoc paperkey pass-otp pdftk
+    powerstat powertop pv pwgen pythonPackages.subliminal ranger ripgrep
+    rsync sqlite strace tcpdump termdown tig tmux tokei tree tree units
+    unzip up watch weechat wget yq zbar zip zsh zsh-syntax-highlighting
+    rclone starship cookiecutter git-lfs
     (hunspellWithDicts [ hunspellDicts.en-gb-ise ])
     (texlive.combine {
       inherit (texlive) scheme-small;
@@ -52,7 +52,6 @@ in
         plugins = [ (callPackage ./packages/kakoune-surround.nix {}) ];
       };
     })
-    (import ./nix/mk-emacs.nix { inherit pkgs; } ./dotfiles/emacs.el)
 
     # haskell
     stack cabal2nix ghc
@@ -65,8 +64,7 @@ in
     python37 python37Packages.virtualenv
 
     # nix
-    nix-prefetch-scripts patchelf nixops nix-top
-    niv cachix
+    nix-prefetch-scripts patchelf nix-top niv cachix
   ];
 
   programs.git = {
@@ -78,12 +76,18 @@ in
       st = "status -sb";
     };
     extraConfig = {
-        url = {
-          "ssh://git@github.com/" = { insteadOf = https://github.com/; };
-        };
-        hub = {
-          protocol = "git";
-        };
+      "filter \"lfs\"" = {
+        process = "git-lfs filter-process";
+        required = true;
+        clean = "git-lfs clean -- %f";
+        smudge = "git-lfs smudge -- %f";
+      };
+      url = {
+        "ssh://git@github.com/" = { insteadOf = https://github.com/; };
+      };
+      hub = {
+        protocol = "git";
+      };
     };
   } // (if user.gpgKey != ""
         then { signing = { signByDefault = true;
@@ -98,6 +102,9 @@ in
       if user.gpgSshKeygrip != ""
       then [ user.gpgSshKeygrip ]
       else [];
+    extraConfig = ''
+      pinentry-program ${pkgs.pinentry-gtk2}/bin/pinentry
+    '';
   };
 
   xsession = {
@@ -133,13 +140,13 @@ in
   home.file.".config/i3/config".source = ./dotfiles/i3/config;
   home.file.".config/i3/autostart.sh".source = ./dotfiles/i3/autostart.sh;
   home.file.".config/i3/wallpaper.png".source = ./dotfiles/i3/wallpaper.png;
-  home.file.".config/i3status/config".source = ./dotfiles/i3/i3status;
+  home.file.".config/i3blocks/config".source = ./dotfiles/i3/i3blocks;
 
   home.file.".config/kitty/kitty.conf".source = ./dotfiles/kitty.conf;
 
-  home.file.".config/qutebrowser/config.py".source = ./dotfiles/qutebrowser/config.py;
-  home.file.".config/qutebrowser/bookmarks/urls".source =
-    ./dotfiles/qutebrowser/bookmarks;
+  home.file.".config/rofi/config".source = ./dotfiles/rofi;
+
+  home.file.".config/qutebrowser/config.py".source = ./dotfiles/qutebrowser.py;
 
   home.file.".config/mimeapps.list".source = ./dotfiles/mimeapps.list;
 
