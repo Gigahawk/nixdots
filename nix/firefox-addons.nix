@@ -1,5 +1,19 @@
 { buildFirefoxXpiAddon, fetchurl, stdenv }:
   {
+    "decentraleyes" = buildFirefoxXpiAddon {
+      pname = "decentraleyes";
+      version = "2.0.13";
+      addonId = "jid1-BoFifL9Vbdl2zQ@jetpack";
+      url = "https://addons.mozilla.org/firefox/downloads/file/3423038/decentraleyes-2.0.13-an+fx.xpi?src=";
+      sha256 = "9dd1aa4e752166fb13ddc06068cf4c1aacc7e2789128fa103cf81285818943ea";
+      meta = with stdenv.lib;
+      {
+        homepage = "https://decentraleyes.org";
+        description = "Protects you against tracking through \"free\", centralized, content delivery. It prevents a lot of requests from reaching networks like Google Hosted Libraries, and serves local files to keep sites from breaking. Complements regular content blockers.";
+        license = licenses.mpl20;
+        platforms = platforms.all;
+        };
+      };
     "https-everywhere" = buildFirefoxXpiAddon {
       pname = "https-everywhere";
       version = "2019.11.7";
