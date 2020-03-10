@@ -82,6 +82,10 @@ case "$mode" in
         trace sudo nix-collect-garbage --delete-older-than 7d
         trace sudo nix optimise-store
         ;;
+    "ci")
+        export NIX_PATH=nixpkgs="$(nix eval --raw '(import nix/sources.nix).nixpkgs.outPath')"
+        trace nix-build nix/ci.nix --keep-going
+        ;;
     "help")
         [[ $# -gt 0 ]] && invalid_syntax
         usage
