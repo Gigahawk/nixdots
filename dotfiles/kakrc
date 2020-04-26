@@ -40,7 +40,7 @@ hook global InsertChar \n %{ execute-keys -draft \; K <a-&> }
 hook global BufWritePre .* %{ try %{ execute-keys -draft \%s\h+$<ret>d } }
 
 # lsp
-eval %sh{kak-lsp --kakoune -s $kak_session}
+eval %sh{kak-lsp --kakoune -s $kak_session --config ~/.config/kak/kak-lsp.toml}
 hook global WinSetOption filetype=(rust,terraform) %{
     lsp-enable-window
 }
