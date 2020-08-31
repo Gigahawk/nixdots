@@ -1,17 +1,16 @@
 { config, pkgs, ... }:
-let
-  sources = import ./nix/sources.nix;
-in
 {
   imports =
     ( builtins.filter builtins.pathExists [ ./home-private.nix ] ) ++ [
-      ./user.nix
+      ./nix/dotfiles.nix
       ./home/wm.nix
       ./home/git.nix
       ./home/qutebrowser.nix
       ./home/kitty.nix
       ./home/shell.nix
     ];
+
+  dotfiles = import ./user.nix;
 
   home.packages = with pkgs; [
     # WM
