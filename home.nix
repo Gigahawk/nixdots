@@ -34,7 +34,6 @@
     xclip
     xsel
     zathura
-    claws-mail
     inkscape
     macchanger
     gthumb
