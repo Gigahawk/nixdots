@@ -35,7 +35,7 @@ shift
 
 case "$mode" in
     "build")
-        trace sudo nixos-rebuild build --flake . "${@}"
+        trace nixos-rebuild build --flake . "${@}"
         echo "Drv: " "$(readlink ./result)"
         nix-shell -p python3 --run "./nix/diff /var/run/current-system result >&2"
         ;;
