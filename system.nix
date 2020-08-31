@@ -152,7 +152,7 @@ in
     shell = "${pkgs.zsh}/bin/zsh";
   };
 
-  home-manager.users.${config.dotfiles.username} = args: import ./home.nix (args // { inherit pkgs;  });
+  home-manager.users.${config.dotfiles.username} = args: import ./home.nix (args // { inherit pkgs; });
 
   system.stateVersion = "20.09";
 }

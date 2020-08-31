@@ -7,15 +7,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
-  outputs = { self, ...}@inputs: {
+  outputs = { self, ... }@inputs: {
     nixosConfigurations."${(import ./user.nix).hostname}" = inputs.nixpkgs.lib.nixosSystem {
-       system = "x86_64-linux";
-       modules = [
-         ./system.nix
-         ./hardware.nix
-         inputs.home-manager.nixosModules.home-manager
-         inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t480s
-       ];
+      system = "x86_64-linux";
+      modules = [
+        ./system.nix
+        ./hardware.nix
+        inputs.home-manager.nixosModules.home-manager
+        inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t480s
+      ];
     };
   };
 }

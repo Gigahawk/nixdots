@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 {
   imports =
-    ( builtins.filter builtins.pathExists [ ./home-private.nix ] ) ++ [
+    (builtins.filter builtins.pathExists [ ./home-private.nix ]) ++ [
       ./nix/dotfiles.nix
       ./home/wm.nix
       ./home/git.nix
@@ -137,16 +137,17 @@
 
     (
       callPackage ./nix/mk-scripts.nix
-        { } {
-        path = ./scripts;
-        postBuild = ''
-          wrapProgram "$out/bin/ergo" \
-            --prefix PATH ":" "${yad}/bin"
-        '';
-      }
+        { }
+        {
+          path = ./scripts;
+          postBuild = ''
+            wrapProgram "$out/bin/ergo" \
+              --prefix PATH ":" "${yad}/bin"
+          '';
+        }
     )
     jaro
-    (runCommand "jaro-xdg-open" {} ''
+    (runCommand "jaro-xdg-open" { } ''
       mkdir -p $out/bin
       ln -s ${jaro}/bin/jaro $out/bin/xdg-open
     '')
@@ -154,7 +155,7 @@
     # password-store
     (pass.withExtensions (ext: [
       ext.pass-otp
-      (runCommand "pass-rotate" {} ''
+      (runCommand "pass-rotate" { } ''
         install -vDm ugo=x \
           ${./scripts/pass-rotate} \
           $out/lib/password-store/extensions/rotate.bash
