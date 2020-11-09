@@ -9,4 +9,4 @@ jobs:
       - uses: nixbuild/nixbuild-action@v1
         with:
           nixbuild_ssh_key: ${{ secrets.nixbuild_ssh_key }}
-      - run: nix-build
+      - run: nix-build nix/ci.nix
