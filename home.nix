@@ -214,17 +214,17 @@
 
   services.syncthing.enable = true;
 
-  services.gpg-agent = {
-    enable = true;
-    enableSshSupport = true;
-    sshKeys =
-      if config.dotfiles.gpgSshKeygrip != ""
-      then [ config.dotfiles.gpgSshKeygrip ]
-      else [ ];
-    extraConfig = ''
-      pinentry-program ${pkgs.pinentry-gtk2}/bin/pinentry
-    '';
-  };
+  #services.gpg-agent = {
+  #  enable = true;
+  #  enableSshSupport = true;
+  #  sshKeys =
+  #    if config.dotfiles.gpgSshKeygrip != ""
+  #    then [ config.dotfiles.gpgSshKeygrip ]
+  #    else [ ];
+  #  extraConfig = ''
+  #    pinentry-program ${pkgs.pinentry-gtk2}/bin/pinentry
+  #  '';
+  #};
 
   manual.manpages.enable = true;
 
