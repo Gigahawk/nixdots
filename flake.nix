@@ -9,16 +9,16 @@
     };
   };
   outputs = { self, ... }@inputs: {
-    nixosConfigurations."${(import ./user.nix).hostname}" =
-      inputs.nixpkgs.lib.nixosSystem {
+    nixosConfigurations = {
+      nixosVbox = inputs.nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
           ./system.nix
           ./hardware.nix
           inputs.home-manager.nixosModules.home-manager
-          inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t480s
           { nixpkgs.overlays = [ inputs.emacs-overlay.overlay ]; }
         ];
       };
+    }
   };
 }
