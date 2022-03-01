@@ -79,6 +79,21 @@
 #    };
   imports = [ ];
 
+  boot = {
+    loader = {
+      efi.efiSysMountPoint = "/boot";
+      efi.canTouchEfiVariables = mkDefault true;
+
+      grub = {
+        enable = mkDefault true;
+        version = 2;
+        device = "nodev";
+        efiSupport = mkDefault true;
+        useOSProber = mkDefault true;
+      };
+    };
+  };
+
   boot.initrd.availableKernelModules = [ "ata_piix" "ohci_pci" "sd_mod" "sr_mod" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ ];
