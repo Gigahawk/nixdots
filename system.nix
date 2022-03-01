@@ -14,7 +14,7 @@ in
     ];
 
   dotfiles = import ./user.nix;
-  networking.hostName = config.dotfiles.hostname;
+  networking.hostName = "nixosVbox";
 
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 
