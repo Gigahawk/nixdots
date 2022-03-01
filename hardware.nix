@@ -79,17 +79,19 @@
 #    };
   imports = [ ];
 
+  hardware.enableRedistributableFirmware = true;
+
   boot = {
     loader = {
       efi.efiSysMountPoint = "/boot";
-      efi.canTouchEfiVariables = mkDefault true;
+      efi.canTouchEfiVariables = true;
 
       grub = {
-        enable = mkDefault true;
+        enable = true;
         version = 2;
         device = "nodev";
-        efiSupport = mkDefault true;
-        useOSProber = mkDefault true;
+        efiSupport = true;
+        useOSProber = true;
       };
     };
   };
@@ -114,7 +116,7 @@
   swapDevices =
     [{ device = "/dev/disk/by-label/swap"; }];
 
-  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+  hardware.cpu.amd.updateMicrocode = true;
 
   virtualisation.virtualbox.guest.enable = true;
 }
