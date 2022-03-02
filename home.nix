@@ -62,7 +62,7 @@
     curl
     direnv
     dnsutils
-    docker_compose
+    docker-compose
     dos2unix
     entr
     (
