@@ -55,7 +55,6 @@ in
       "nixpkgs=${pkgs.path}"
     ];
 
-    daemonNiceLevel = 19;
     gc.automatic = true;
     optimise.automatic = true;
     extraOptions = ''
