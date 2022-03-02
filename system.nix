@@ -139,7 +139,7 @@ in
     package = pkgs.pulseaudioFull;
   };
   hardware.opengl.driSupport32Bit = true;
-  hardware.opengl.extraPackages = [ pkgs.intel-ocl ];
+#  hardware.opengl.extraPackages = [ pkgs.intel-ocl ];
 
   hardware.bluetooth.enable = true;
   services.blueman.enable = true;
