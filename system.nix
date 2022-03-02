@@ -20,18 +20,19 @@ in
 
   nixpkgs = {
     config = {
-      allowUnfreePredicate = pkg:
-        builtins.elem
-          (getName pkg)
-          [
-            "google-chrome"
-            "spotify"
-            "spotify-unwrapped"
-            "slack"
-            "zoom-us"
-            "intel-ocl"
-            "faac" # required for zoom
-          ];
+      allowUnfree = true;
+#      allowUnfreePredicate = pkg:
+#        builtins.elem
+#          (getName pkg)
+#          [
+#            "google-chrome"
+#            "spotify"
+#            "spotify-unwrapped"
+#            "slack"
+#            "zoom-us"
+#            "intel-ocl"
+#            "faac" # required for zoom
+#          ];
     };
     overlays = [
       (import ./overlay.nix)
